@@ -6,9 +6,9 @@ public class CreateOctree : MonoBehaviour
 {
     public GameObject[] worldObjects;
     public int nodeMinSize = 5;
-    Octree ot;
-    Graph wayPoints;
+    public Graph wayPoints;
 
+    Octree ot;
     private void Start()
     {
         wayPoints = new Graph();
