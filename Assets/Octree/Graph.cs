@@ -48,14 +48,16 @@ public class Graph
 
     public void Draw()
     {
+        Gizmos.color = new Color(1, 0, 0, 1);
         for (int i = 0; i < edges.Count; i++)
         {
-            Debug.DrawLine(edges[i].startNode.octreeNode.nodeBounds.center, edges[i].startNode.octreeNode.nodeBounds.center, Color.red);
+            Gizmos.DrawLine(edges[i].startNode.octreeNode.nodeBounds.center, edges[i].endNode.octreeNode.nodeBounds.center);
+            //Debug.DrawLine(edges[i].startNode.octreeNode.nodeBounds.center, edges[i].endNode.octreeNode.nodeBounds.center, Color.red);
         }
         for (int i = 0; i < nodes.Count; i++)
         {
             Gizmos.color = new Color(1, 1, 0);
-            Gizmos.DrawWireSphere(nodes[i].octreeNode.nodeBounds.center, 0.1f);
+            Gizmos.DrawWireSphere(nodes[i].octreeNode.nodeBounds.center, 0.05f);
         }
     }
 

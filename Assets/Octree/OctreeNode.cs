@@ -21,17 +21,20 @@ public class OctreeNode
 
     Bounds[] childBounds;
     float minSize;
+
+    public OctreeNode parent;
     public List<OctreeObject> containedObjects = new List<OctreeObject>();
 
     public Bounds nodeBounds;
     public OctreeNode[] children = null;
     public int id;
 
-    public OctreeNode(Bounds b, float minNodeSize)
+    public OctreeNode(Bounds b, float minNodeSize, OctreeNode p)
     {
         nodeBounds = b;
         minSize = minNodeSize;
         id = IDGenerate.GetId();
+        parent = p;
 
         float quarter = nodeBounds.size.y / 4f;
         float childLength = nodeBounds.size.y / 2f;
@@ -46,6 +49,7 @@ public class OctreeNode
         childBounds[5] = new Bounds(nodeBounds.center + new Vector3(quarter, -quarter, -quarter), childSize);
         childBounds[6] = new Bounds(nodeBounds.center + new Vector3(-quarter, -quarter, quarter), childSize);
         childBounds[7] = new Bounds(nodeBounds.center + new Vector3(quarter, -quarter, quarter), childSize);
+ 
     }
 
     public void AddObject(GameObject go)
@@ -70,7 +74,7 @@ public class OctreeNode
         for (int i = 0; i < 8; i++)
         {
             if (children[i] == null)
-                children[i] = new OctreeNode(childBounds[i], minSize);
+                children[i] = new OctreeNode(childBounds[i], minSize, this);
 
             //if (childBounds[i].Intersects(octObj.bounds))
 

@@ -819,8 +819,6 @@ MonoBehaviour:
   - {fileID: 1882258779}
   - {fileID: 1294091724}
   - {fileID: 1104872182}
-  - {fileID: 1899318139}
-  - {fileID: 816541438}
   nodeMinSize: 1
 --- !u!4 &1193795603
 Transform:
