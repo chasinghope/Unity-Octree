@@ -5,7 +5,6 @@ using UnityEngine;
 public class Octree
 {
     public OctreeNode rootNode;
-    public Bounds boundsD;
 
     public Octree(GameObject[] worldObjects, float minNodeSize)
     {
@@ -14,6 +13,21 @@ public class Octree
         {
             bounds.Encapsulate(go.GetComponent<Collider>().bounds);
         }
-        boundsD = bounds;
+
+
+        float maxSize = Mathf.Max(new float[] { bounds.size.x, bounds.size.y, bounds.size.z});
+        Vector3 sizeVector = new Vector3(maxSize, maxSize, maxSize) * 0.5f;
+        bounds.SetMinMax(bounds.center - sizeVector, bounds.center + sizeVector);
+
+        rootNode = new OctreeNode(bounds, minNodeSize);
+        AddObejct(worldObjects);
+    }
+
+    public void AddObejct(GameObject[] worldObjects)
+    {
+        foreach (GameObject go in worldObjects)
+        {
+            rootNode.AddObject(go);
+        }
     }
 }
