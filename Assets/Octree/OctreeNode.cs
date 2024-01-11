@@ -18,17 +18,20 @@ public struct OctreeObject
 
 public class OctreeNode
 {
-    Bounds nodeBounds;
+
     Bounds[] childBounds;
     float minSize;
+    public List<OctreeObject> containedObjects = new List<OctreeObject>();
 
+    public Bounds nodeBounds;
     public OctreeNode[] children = null;
-    List<OctreeObject> containedObjects = new List<OctreeObject>();
+    public int id;
 
     public OctreeNode(Bounds b, float minNodeSize)
     {
         nodeBounds = b;
         minSize = minNodeSize;
+        id = IDGenerate.GetId();
 
         float quarter = nodeBounds.size.y / 4f;
         float childLength = nodeBounds.size.y / 2f;
@@ -69,6 +72,8 @@ public class OctreeNode
             if (children[i] == null)
                 children[i] = new OctreeNode(childBounds[i], minSize);
 
+            //if (childBounds[i].Intersects(octObj.bounds))
+
             if (childBounds[i].Contains(octObj.bounds.min) && childBounds[i].Contains(octObj.bounds.max))
             {
                 dividing = true;
@@ -87,6 +92,12 @@ public class OctreeNode
     {
         Gizmos.color = new Color(0, 1, 0);
         Gizmos.DrawWireCube(nodeBounds.center, nodeBounds.size);
+        Gizmos.color = new Color(1, 0, 0);
+
+        foreach (OctreeObject child in containedObjects)
+        {
+            Gizmos.DrawCube(child.bounds.center, child.bounds.size);
+        }
 
         if (children != null)
         {
@@ -95,6 +106,11 @@ public class OctreeNode
                 if (children[i] != null)
                     children[i].Draw();
             }
+        }
+        else if( containedObjects.Count != 0)
+        {
+            Gizmos.color = new Color(0, 0, 1, 0.25f);
+            Gizmos.DrawCube(nodeBounds.center, nodeBounds.size);
         }
     }
 

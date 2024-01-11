@@ -5,10 +5,13 @@ using UnityEngine;
 public class Octree
 {
     public OctreeNode rootNode;
+    public List<OctreeNode> emptyLeaves = new List<OctreeNode>();
+    public Graph navigationGraph;
 
-    public Octree(GameObject[] worldObjects, float minNodeSize)
+    public Octree(GameObject[] worldObjects, float minNodeSize, Graph navGraph)
     {
         Bounds bounds = new Bounds();
+        navigationGraph = navGraph;
         foreach (GameObject go in worldObjects)
         {
             bounds.Encapsulate(go.GetComponent<Collider>().bounds);
@@ -21,6 +24,7 @@ public class Octree
 
         rootNode = new OctreeNode(bounds, minNodeSize);
         AddObejct(worldObjects);
+        GetEmptyLeaves(rootNode);
     }
 
     public void AddObejct(GameObject[] worldObjects)
@@ -28,6 +32,28 @@ public class Octree
         foreach (GameObject go in worldObjects)
         {
             rootNode.AddObject(go);
+        }
+    }
+
+    public void GetEmptyLeaves(OctreeNode octreeNode)
+    {
+        if (octreeNode == null)
+            return;
+
+        if(octreeNode.children == null)
+        {
+            if(octreeNode.containedObjects.Count == 0)
+            {
+                emptyLeaves.Add(octreeNode);
+                navigationGraph.AddNode(octreeNode);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                GetEmptyLeaves(octreeNode.children[i]);
+            }
         }
     }
 }
