@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -13,6 +14,7 @@ public class Fly : MonoBehaviour
 
     public GameObject octree;
     Graph graph;
+    List<Node> pathList = new List<Node>();
 
     private void Start()
     {
@@ -24,21 +26,21 @@ public class Fly : MonoBehaviour
         if (graph == null)
             return;
 
-        if (graph.GetPathLength() == 0 || currentWP == graph.GetPathLength())
+        if (GetPathLength() == 0 || currentWP == GetPathLength())
         {
             GetRandomDestination();
             return;
         }
 
-        if(Vector3.Distance(graph.GetPathPoint(currentWP).nodeBounds.center, this.transform.position) <= accuracy)
+        if(Vector3.Distance(GetPathPoint(currentWP).nodeBounds.center, this.transform.position) <= accuracy)
         {
             currentWP++;
         }
 
-        if(currentWP < graph.GetPathLength())
+        if(currentWP < GetPathLength())
         {
-            goal = graph.GetPathPoint(currentWP).nodeBounds.center;
-            currentNode = graph.GetPathPoint(currentWP);
+            goal = GetPathPoint(currentWP).nodeBounds.center;
+            currentNode = GetPathPoint(currentWP);
 
             Vector3 lookAtGoal = new Vector3(goal.x, goal.y, goal.z);
             Vector3 direction = lookAtGoal - this.transform.position;
@@ -49,11 +51,20 @@ public class Fly : MonoBehaviour
         else
         {
             GetRandomDestination();
-            if(graph.GetPathLength() == 0)
+            if(GetPathLength() == 0)
             {
                 Debug.Log("No path");
             }
         }
+    }
+
+    public int GetPathLength()
+    {
+        return pathList.Count;
+    }
+    public OctreeNode GetPathPoint(int index)
+    {
+        return pathList[index].octreeNode;
     }
 
     void Navigate()
@@ -66,7 +77,7 @@ public class Fly : MonoBehaviour
     void GetRandomDestination()
     {
         int randnode = Random.Range(0, graph.nodes.Count);
-        graph.AStar(graph.nodes[currentWP].octreeNode, graph.nodes[randnode].octreeNode);
+        graph.AStar(graph.nodes[currentWP].octreeNode, graph.nodes[randnode].octreeNode, pathList);
         currentWP = 0;
     }
 }

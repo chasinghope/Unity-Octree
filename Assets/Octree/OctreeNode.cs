@@ -52,6 +52,11 @@ public class OctreeNode
  
     }
 
+    public OctreeNode(Bounds bounds)
+    {
+        this.nodeBounds = bounds;
+    }
+
     public void AddObject(GameObject go)
     {
         DivideAndAdd(go);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime.Collections;
 using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
 
@@ -8,7 +9,7 @@ public class Graph
     public List<Edge> edges = new List<Edge>();
     public List<Node> nodes = new List<Node>();
 
-    List<Node> pathList = new List<Node>();
+    //List<Node> pathList = new List<Node>();
 
     public Graph()
     {
@@ -41,12 +42,7 @@ public class Graph
         }
     }
 
-    public int GetPathLength() => pathList.Count;
 
-    public OctreeNode GetPathPoint(int index)
-    {
-        return pathList[index].octreeNode;
-    }
 
     public void Draw()
     {
@@ -64,7 +60,7 @@ public class Graph
     }
 
 
-    public bool AStar(OctreeNode startNode, OctreeNode endNode)
+    public bool AStar(OctreeNode startNode, OctreeNode endNode, List<Node> pathList)
     {
         pathList.Clear();
         Node start = FindNode(startNode.id);
@@ -93,7 +89,7 @@ public class Graph
             Node curNode = open[i];
             if(curNode.octreeNode.id == endNode.id)
             {
-                ReconstructPath(start, end);
+                ReconstructPath(start, end, pathList);
                 return true;
             }
 
@@ -105,19 +101,20 @@ public class Graph
             {
                 neighbour = e.endNode;
 
-                if(neighbour.g != 0)
+                bool isOpenListHave = open.Contains(neighbour);
+                if (!isOpenListHave)
                 {
                     neighbour.g = curNode.g + Vector3.SqrMagnitude(curNode.octreeNode.nodeBounds.center -
-                                               neighbour.octreeNode.nodeBounds.center);
+                       neighbour.octreeNode.nodeBounds.center);
                 }
 
-                if (closed.IndexOf(neighbour) > -1)
+                if (closed.Contains(neighbour))
                     continue;
 
                 tentative_g_score = curNode.g + Vector3.SqrMagnitude(curNode.octreeNode.nodeBounds.center -
                                                                neighbour.octreeNode.nodeBounds.center);
 
-                if (open.IndexOf(neighbour) == -1)
+                if (!isOpenListHave)
                 {
                     open.Add(neighbour);
                     tentative_is_better = true;
@@ -145,7 +142,7 @@ public class Graph
         return false;
     }
 
-    public void ReconstructPath(Node startId, Node endId)
+    public void ReconstructPath(Node startId, Node endId, List<Node> pathList)
     {
         pathList.Clear();
         pathList.Add(endId);
@@ -159,7 +156,7 @@ public class Graph
         pathList.Insert(0, startId);
     }
 
-    Node FindNode(int otn_id)
+    public Node FindNode(int otn_id)
     {
         foreach (Node n in nodes)
         {
